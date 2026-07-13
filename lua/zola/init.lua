@@ -3,21 +3,6 @@ local M = {}
 
 --- Plugin configuration defaults.
 M.config = {
-    common = { root = nil }, -- the root of the site to be applied to all function calls
-    build = { -- any config to be used when calling `zola build`
-        force = false, -- overwrite files already present at output_dir
-        minify = true, -- minify output pages
-        drafts = false, -- include drafts in the output
-    },
-    serve = { -- options to be used with `zola serve`
-        drafts = false, -- include draft pages and sections in preview
-        open = true, -- open the preview in default browser
-        fast = false, -- only rebuild pages necessary instead of whole site
-    },
-    check = { -- options to be used in `zola check`
-        drafts = false, -- also check any pages and sections maked as drafrs
-        skip_external_links = false, -- don't check whether external links are broken
-    },
     page_defaults = { -- any options used when creating new pages (zola.nvim only)
         page_is_dir = true, -- pages are located at page-slug/index.md instead of page-slug.md
         force = false, -- continue and oferwrite files it already exists at provided path
@@ -45,85 +30,13 @@ function M.is_zola_site(root)
     return site_utils._discover_config_file(root) ~= nil and site_utils._discover_content_folder(root) ~= nil
 end
 
---- Build the Zola site.
----@param opts { root?: string, force?: boolean, draft?: boolean, ouput_dir?: string}
-function M.build(opts)
-    local cmd = require('zola.cmd')._compute_build_args(opts, M.config.build, M.config.common)
-
-    require('zola.utils')._run_job(cmd, {
-        stdout_buffered = true,
-        stderr_buffered = true,
-
-        on_stderr = function(_, data)
-            if data then
-                for _, line in ipairs(data) do
-                    vim.notify('[Zola]: ' .. line, vim.log.levels.ERROR)
-                end
-            end
-        end,
-        on_exit = function(_, code)
-            if code == 0 then
-                vim.notify('[Zola] Site built successfully!', vim.log.levels.INFO)
-            else
-                vim.notify('[Zola] Build failed with code ' .. code, vim.log.levels.ERROR)
-            end
-        end,
-    })
-end
-
---- Check the Zola site for errors and warnings.
----@param opts {root?: string, drafts?: boolean, skip_external_links?: boolean}
-function M.check(opts)
-    local cmd = require('zola.cmd')._compute_check_args(opts, M.config.check, M.config.common)
-    require('zola.utils')._run_job(cmd, {
-        stdout_buffered = true,
-        stderr_buffered = true,
-
-        on_stderr = function(_, data)
-            if data then
-                for _, line in ipairs(data) do
-                    vim.notify(line, vim.log.levels.ERROR)
-                end
-            end
-        end,
-
-        on_exit = function(_, code)
-            if code == 0 then
-                vim.notify('[Zola] Check successful', vim.log.levels.INFO)
-            else
-                vim.notify('[Zola] Check failed ', vim.log.levels.ERROR)
-            end
-        end,
-    })
-end
-
---- Serve the Zola site locally with live reload.
----@param opts {slug: string, root?: string, force?: boolean, draft?: boolean, open?: boolean, page_is_dir?:boolean}
-function M.serve(opts)
-    local cmd = require('zola.cmd')._compute_serve_args(opts, M.config.common, M.config.serve)
-    local serve_buf_nr = vim.api.nvim_create_buf(false, true)
-    vim.bo[serve_buf_nr].bufhidden = 'wipe'
-    vim.bo[serve_buf_nr].buftype = 'nofile'
-    vim.bo[serve_buf_nr].filetype = 'zola-log'
-
-    vim.cmd 'vsplit'
-    vim.api.nvim_win_set_buf(0, serve_buf_nr)
-
-    -- Start terminal job directly
-    require('zola.utils')._run_job(cmd, {
-        stdout_buffered = false,
-        stderr_buffered = false,
-        term = true,
-    })
-end
-
 --- Create a new section with _index.md in the content folder.
 ---@param opts {slug: string, root?: string, force?: boolean, draft?: boolean, open?: boolean, date?: boolean}
 function M.create_section(opts)
     vim.validate { path = { opts.slug, 'string' } }
     local Path = require 'plenary.path'
 
-    local used_opts = require('zola.utils')._merge_tables(opts, M.config.section_defaults)
+    local used_opts = vim.tbl_deep_extend('force', opts, M.config.section_defaults)
 
     local content_folder = require('zola.site')._discover_content_folder(used_opts.root)
     if not content_folder then
@@ -155,7 +68,7 @@ function M.create_page(opts)
     vim.validate { slug = { opts.slug, 'string' } }
     local Path = require 'plenary.path'
 
-    local used_opts = require('zola.utils')._merge_tables(opts, M.config.page_defaults)
+    local used_opts = vim.tbl_deep_extend('force', opts, M.config.page_defaults)
 
     local content_folder = require('zola.site')._discover_content_folder(used_opts.root)
     if not content_folder then

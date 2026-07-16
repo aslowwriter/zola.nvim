@@ -1,5 +1,5 @@
 local new_set = MiniTest.new_set
-local expect, eq = MiniTest.expect, MiniTest.expect.equality
+local eq = MiniTest.expect.equality
 
 local render_front_matter = require('zola.front_matter').render_front_matter
 
@@ -10,13 +10,13 @@ T['basic'] = new_set()
 
 T['basic']['render basic header no args'] = function()
     local header, _, _ = render_front_matter(false)
-    local expected = { '+++', 'title = ""', 'date = ' .. today, '+++', '' }
+    local expected = { '+++', 'title = ""', 'date = ' .. today, '', '+++', '' }
     eq(header, expected)
 end
 
 T['basic']['render basic header with args'] = function()
     local header, _, _ = render_front_matter(true)
-    local expected = { '+++', 'title = ""', 'date = ' .. today, 'draft = true', '+++', '' }
+    local expected = { '+++', 'title = ""', 'date = ' .. today, 'draft = true', '', '+++', '' }
     eq(header, expected)
 end
 
@@ -30,7 +30,61 @@ T['basic']['basic render puts cursor between quotes'] = function()
 end
 T['basic']['render draft header'] = function()
     local header, _, _ = render_front_matter(true)
-    local expected = { '+++', 'title = ""', 'date = ' .. today, 'draft = true', '+++', '' }
+    local expected = { '+++', 'title = ""', 'date = ' .. today, 'draft = true', '', '+++', '' }
+
+    eq(header, expected)
+end
+
+T['taxonomy'] = new_set()
+
+T['taxonomy']['empty taxonomy table does not add header'] = function()
+    local header, _, _ = render_front_matter(false, {})
+    local expected = { '+++', 'title = ""', 'date = ' .. today, '', '+++', '' }
+
+    eq(header, expected)
+end
+T['taxonomy']['nil taxonomy table does not add header'] = function()
+    local header, _, _ = render_front_matter(false, nil)
+    local expected = { '+++', 'title = ""', 'date = ' .. today, '', '+++', '' }
+
+    eq(header, expected)
+end
+
+T['taxonomy']['empty taxonomy still adds it'] = function()
+    local header, _, _ = render_front_matter(false, { tags = {} })
+    local expected = { '+++', 'title = ""', 'date = ' .. today, '', '[taxonomies]', 'tags = []', '', '+++', '' }
+
+    eq(header, expected)
+end
+
+T['taxonomy']['empty string value still adds it'] = function()
+    local header, _, _ = render_front_matter(false, { tags = '' })
+    local expected = { '+++', 'title = ""', 'date = ' .. today, '', '[taxonomies]', 'tags = []', '', '+++', '' }
+
+    eq(header, expected)
+end
+
+T['taxonomy']['taxonomy with values'] = function()
+    local header, _, _ = render_front_matter(false, { tags = { 'nvim', 'testing' } })
+    local expected = { '+++', 'title = ""', 'date = ' .. today, '', '[taxonomies]', 'tags = ["nvim", "testing"]', '', '+++', '' }
+
+    eq(header, expected)
+end
+
+T['taxonomy']['multiple taxonomies'] = function()
+    local header, _, _ = render_front_matter(false, { tags = { 'nvim', 'testing' }, categories = { 'tutorial' } })
+    local expected = {
+        '+++',
+        'title = ""',
+        'date = ' .. today,
+        '',
+        '[taxonomies]',
+        'categories = ["tutorial"]',
+        'tags = ["nvim", "testing"]',
+        '',
+        '+++',
+        '',
+    }
 
     eq(header, expected)
 end

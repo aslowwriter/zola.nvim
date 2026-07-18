@@ -70,4 +70,25 @@ function M.write_to_file(path, content)
     return 0
 end
 
+---comment
+---@param slug any
+---@param kind any
+---@param page_is_dir any
+---@return string
+function M.filepath_from_slug(content_dir, slug, kind, page_is_dir)
+    local path = Path:new(content_dir):joinpath(slug)
+
+    if kind == 'section' then
+        return path:joinpath('_index.md').filename
+    elseif kind == 'page' then
+        if page_is_dir then
+            return path:joinpath('index.md').filename
+        else
+            return path.filename .. '.md'
+        end
+    else
+        error('unknown kind: ' .. kind)
+    end
+end
+
 return M

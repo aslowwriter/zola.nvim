@@ -56,6 +56,11 @@ function source:get_completions(_ctx, callback)
 
     local items = {}
 
+    if files == nil then
+        vim.notify('error during file discovery, suggestion unavailable', vim.log.levels.WARN)
+        return items
+    end
+
     for _, file in ipairs(files) do
         local rel_path = vim.fs.relpath(M.runtime.content_dir.filename, file)
         local label = source._label_from_rel_path(rel_path)

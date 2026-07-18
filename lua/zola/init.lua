@@ -21,6 +21,8 @@ function M.create(opts)
     vim.validate {
         slug = { opts.slug, 'string' },
         kind = { opts.kind, 'string' },
+        draft = { opts.draft, 'boolean', true },
+        page_is_dir = { opts.page_is_dir, 'boolean', true },
         taxonomies = { opts.taxonomies, 'table', true },
     }
 
@@ -48,7 +50,26 @@ function M.create(opts)
     end
 end
 
-M.setup {}
-M.create { slug = 'bar', kind = 'section', taxonomies = { tags = { 'nvim' } } }
+function M.create_interactive(opts)
+    local new_opts = opts
+    vim.validate {
+        kind = { new_opts.kind, 'string' },
+    }
+    vim.ui.input({ prompt = 'Enter slug: ' }, function(result)
+        if not result then
+            return
+        end
+
+        if opts.prefix then
+            new_opts.slug = opts.prefix .. '/' .. result
+        else
+            new_opts.slug = result
+        end
+
+        new_opts.prefix = nil
+
+        M.create(new_opts)
+    end)
+end
 
 return M

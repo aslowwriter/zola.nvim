@@ -14,3 +14,6 @@ deps/mini.nvim:
 deps/plenary.nvim:
 	git clone --filter=blob:none https://github.com/nvim-lua/plenary.nvim $@
 
+deps/blink.cmp:
+	git clone --filter=blob:none https://github.com/saghen/blink.cmp $@
+

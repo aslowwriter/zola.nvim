@@ -2,6 +2,23 @@ local M = {}
 
 local Path = require 'plenary.path'
 
+---creates a randomly named dir in the /tmp folder
+---used for testing
+---@return Path|nil
+function M._new_tmp_path()
+    local name = ''
+    for _ = 1, 10 do
+        name = name .. string.char(math.random(65, 90))
+    end
+
+    local tmp_path = Path:new(Path:new('/tmp/zola_nvim_testing/' .. name):normalize())
+    if tmp_path:mkdir { parents = true } then
+        return tmp_path
+    else
+        return nil
+    end
+end
+
 ---check for known zola config files and if it finds any
 ---return the path to the found file
 ---nil if nothing is foind

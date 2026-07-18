@@ -10,3 +10,7 @@ test_file: deps/mini.nvim
 deps/mini.nvim:
 	@mkdir -p deps
 	git clone --filter=blob:none https://github.com/nvim-mini/mini.nvim $@
+
+deps/plenary.nvim:
+	git clone --filter=blob:none https://github.com/nvim-lua/plenary.nvim $@
+

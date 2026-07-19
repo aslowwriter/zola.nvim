@@ -49,9 +49,18 @@ function source._discover_files(root)
     return vim.fn.globpath(path, '**/*.*', false, true)
 end
 
-function source._filter_ignored_content(files, ignore_globs) end
+function source._should_show(line, start_col)
+    local line_content_preceding = string.sub(line, 0, start_col)
 
-function source:get_completions(_ctx, callback)
+    return string.match(line_content_preceding, '.*%(%s*@')
+end
+
+function source:get_completions(ctx, callback)
+    if not source._should_show(ctx.bounds.line, ctx.bounds.start_col) then
+        callback()
+        return
+    end
+
     local files = source._discover_files(M.runtime.content_dir.filename)
 
     local items = {}

@@ -6,7 +6,9 @@ Making using zola that bit easier. This is a plugin to help with zola workflows
 ## Features
 
 - lua function to create and open new pages/sections so you can start writing immediately
-- a `blink.cmp` source to autocomplete internal links (using zola's `@` link syntax)
+- a `blink.cmp` source to provide autocomplet for the following things:
+    - internal links (using zola's `@` link syntax)
+    - shortcodes when inside a `{{ }}`
 
 ## Installation
 
@@ -45,9 +47,10 @@ return {
   'saghen/blink.cmp',
   opts = {
     sources = {
-      default = { 'zola' }, -- <-- add this part
+      default = { 'zola_content_path', 'zola_shortcodes' }, -- <-- add the appropriate ones here so they load
       providers = {
-        zola = { module = 'zola.sources.content_paths'} -- <-- and this part
+        zola_content_path = { module = 'zola.sources.content_paths'} -- <-- add this one for @ completion
+        zola_shortcodes = { module = 'zola.sources.shortcodes'} -- <-- add this one for {{ }} completion
       },
     },
   },

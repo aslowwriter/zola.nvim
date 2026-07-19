@@ -19,6 +19,16 @@ function M._new_tmp_path()
     end
 end
 
+function M.discover_shortcode_dir(path)
+    local dir = Path:new(path)
+    local shortcode_dir = dir:joinpath 'templates/shortcodes'
+    if shortcode_dir:is_dir() then
+        return shortcode_dir
+    else
+        return nil
+    end
+end
+
 ---check for known zola config files and if it finds any
 ---return the path to the found file
 ---nil if nothing is foind

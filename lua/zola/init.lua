@@ -15,6 +15,7 @@ M.setup = function(opts)
     M.config = vim.tbl_deep_extend('force', M.config, opts or {})
     M.runtime.content_dir = fs.discover_content_dir(opts.root or vim.fn.getcwd())
     M.runtime.config_file = fs.discover_config_file(opts.root or vim.fn.getcwd())
+    M.runtime.shortcode_dir = fs.discover_shortcode_dir(opts.root or vim.fn.getcwd())
 end
 
 function M.create(opts)

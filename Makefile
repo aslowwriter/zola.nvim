@@ -1,5 +1,6 @@
 # Run all test files
 test: deps/mini.nvim
+	rm -rf /tmp/zola_nvim_testing/
 	nvim --headless --noplugin -u ./scripts/minimal_init.lua -c "lua MiniTest.run()"
 
 # Run test from file at `$FILE` environment variable

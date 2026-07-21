@@ -121,3 +121,32 @@ for example here is how I have them configured:
   },
 
 ```
+## Contributing
+
+### Project status
+
+The project is currently more or less "done," which means that it does all the things that I wanted to do
+(and could achieve in a reasnoably maintainable way). This means it may not see reagular updates, but that does not
+mean that it is "dead." For the time being I'll still be here to provide bugfixes and feature requests (should they arise)
+
+Making issues and feature requests is still very much encouraged.
+
+
+### Testing
+
+If you want to work on a feature, or otherwise verify that the code still works, the easiesst way to do that is by simply
+running `make test` in the root of the project. This will download all the necessary dependencies for you
+(`mini.test`, `plenary.nvim` and `blink.cmp`) and run the tests. There is a somewhat small but reasonable test suite
+under the `test` directory
+
+
+### AI disclosure
+
+For the sake of transparency, I'll mention that the first version of this plugin was more or less vibe coded in the early
+days of AI assisted coding as an experiment. I've kind of hated that version ever since, so I've decided to rewrite everything
+from scratch from the `v0.1.0` tag onward. So in case you care about that thing, anything later than that tag should be safe.
+
+In terms of using AI to submit code yourself, I cannot stop you from doing so, but I would encourage you to consider the
+environmental impacts before doing so. Regardless of what you chose you are responsible for the code you submit no matter
+how it was written, so if you choose to contribute, you should be able to answer relevant review questions about what it is
+what it does and why it was made the way that it was.

@@ -1,5 +1,5 @@
 # Run all test files
-test: deps/mini.nvim
+test: deps/mini.nvim deps/plenary.nvim deps/blink.cmp
 	rm -rf /tmp/zola_nvim_testing/
 	nvim --headless --noplugin -u ./scripts/minimal_init.lua -c "lua MiniTest.run()"
 

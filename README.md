@@ -9,6 +9,7 @@ Making using zola that bit easier. This is a plugin to help with zola workflows
 - a `blink.cmp` source to provide autocomplet for the following things:
     - internal links (using zola's `@` link syntax)
     - shortcodes when inside a `{{ }}`
+    - taxonomies when on a line of the form `name = [.*` where `name` is the name of a taxonomy as defined in your `config.toml` or `zola.toml` (required `rg` to be installed on your system)
 
 ## Installation
 
@@ -47,10 +48,11 @@ return {
   'saghen/blink.cmp',
   opts = {
     sources = {
-      default = { 'zola_content_path', 'zola_shortcodes' }, -- <-- add the appropriate ones here so they load
+      default = { 'zola_content_path', 'zola_shortcodes', 'zola_taxonomies' }, -- <-- add the appropriate ones here so they load
       providers = {
         zola_content_path = { module = 'zola.sources.content_paths'} -- <-- add this one for @ completion
         zola_shortcodes = { module = 'zola.sources.shortcodes'} -- <-- add this one for {{ }} completion
+        zola_taxonomies = { module = 'zola.sources.taxonomies'} -- <-- add this one for taxonomy completion
       },
     },
   },
@@ -58,7 +60,18 @@ return {
 ```
 
 If it is correctly configured it will be enabled any time you open a markdown file in a project with a `content` folder
-and will trigger on `@`
+and completion will trigger when you type `(@` or `{{`.
+
+Note that for taxonomies, completion will only trigger if the line starts with `name = [.*` so if you for example define
+it like this:
+
+```toml
+tags [
+    "tutorial",
+    "nvim"
+]
+```
+then completion will not trigger. This is to not cause performance problems when not in a taxonomy
 
 ## Usage
 

@@ -52,11 +52,24 @@ end
 function source._should_show(line, start_col)
     local line_content_preceding = string.sub(line, 0, start_col)
 
-    return string.match(line_content_preceding, '.*%(%s*@')
+    for i = #line_content_preceding, 2, -1 do
+        local substr = string.sub(line_content_preceding, i, i)
+        if substr == ')' then
+            return false
+        end
+
+        substr = string.sub(line_content_preceding, i - 1, i)
+
+        if substr == '(@' then
+            return true
+        end
+    end
+    return false
 end
 
 function source:get_completions(ctx, callback)
     if not source._should_show(ctx.bounds.line, ctx.bounds.start_col) then
+        print 'not showing'
         callback()
         return
     end

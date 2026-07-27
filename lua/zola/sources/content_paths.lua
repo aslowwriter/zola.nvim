@@ -69,7 +69,6 @@ end
 
 function source:get_completions(ctx, callback)
     if not source._should_show(ctx.bounds.line, ctx.bounds.start_col) then
-        print 'not showing'
         callback()
         return
     end

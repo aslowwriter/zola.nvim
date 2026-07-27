@@ -18,10 +18,10 @@ function source:get_trigger_characters()
     return { '"', "'" }
 end
 
-function source.relevant_taxonomy(line, start_col)
+function source.relevant_taxonomy(line, start_col, known_taxonomies)
     local line_content_preceding = string.sub(line, 0, start_col)
-    for _, tax in ipairs(runtime.taxonomies) do
-        if string.match(line_content_preceding, '%s*' .. tax .. '%s*=%s*%[') then
+    for _, tax in ipairs(known_taxonomies) do
+        if string.match(line_content_preceding, '%s*' .. tax .. '%s*=%s*%[') and not string.find(line_content_preceding, ']') then
             return tax
         end
     end
@@ -56,7 +56,7 @@ function source:get_completions(ctx, callback)
         runtime.taxonomies = taxonomies
     end
 
-    local relevant_taxonomy = source.relevant_taxonomy(ctx.bounds.line, ctx.bounds.start_col)
+    local relevant_taxonomy = source.relevant_taxonomy(ctx.bounds.line, ctx.bounds.start_col, runtime.taxonomies)
     if not relevant_taxonomy then
         callback()
         return

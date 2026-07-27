@@ -45,11 +45,11 @@ function source:get_completions(ctx, callback)
         local taxonomy_table = table.concat(result, '')
         local taxonomies = {}
 
-        for name in string.gmatch(taxonomy_table, '.*name%s*=%s(%b"")') do
+        for name in string.gmatch(taxonomy_table, 'name%s*=%s(%b"")') do
             table.insert(taxonomies, string.sub(name, 2, #name - 1))
         end
 
-        for name in string.gmatch(taxonomy_table, ".*name%s*=%s(%b'')") do
+        for name in string.gmatch(taxonomy_table, "name%s*=%s(%b'')") do
             table.insert(taxonomies, string.sub(name, 2, #name - 1))
         end
 

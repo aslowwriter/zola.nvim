@@ -2,6 +2,9 @@
 
 Making using zola that bit easier. This is a plugin to help with zola workflows
 
+## Demo
+
+<a href="https://asciinema.org/a/1261761" target="_blank"><img src="https://asciinema.org/a/1261761.svg" /></a>
 
 ## Features
 

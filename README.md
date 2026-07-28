@@ -117,13 +117,6 @@ for example here is how I have them configured:
       desc = 'Create a new blog section',
     },
     {
-      '<leader>zz',
-      function()
-        require 'zola'
-      end,
-    },
-
-    {
       '<leader>zp',
       function()
         require('zola').create_interactive {
